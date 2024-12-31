@@ -1,0 +1,81 @@
+import java.io.*;
+import java.nio.file.*;
+import java.util.*;
+
+public class FileOperations {
+    
+    // Method to read from a file
+    public static void readFile(String filename) {
+        try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
+            String line;
+            System.out.println("Reading from file:");
+            while ((line = br.readLine()) != null) {
+                System.out.println(line);
+            }
+        } catch (IOException e) {
+            System.out.println("Error reading the file: " + e.getMessage());
+        }
+    }
+    
+    // Method to write to a file
+    public static void writeFile(String filename, String content) {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(filename))) {
+            bw.write(content);
+            System.out.println("Content written to file successfully.");
+        } catch (IOException e) {
+            System.out.println("Error writing to the file: " + e.getMessage());
+        }
+    }
+    
+    // Method to append to a file
+    public static void appendToFile(String filename, String content) {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(filename, true))) {
+            bw.write(content);
+            System.out.println("Content appended to file successfully.");
+        } catch (IOException e) {
+            System.out.println("Error appending to the file: " + e.getMessage());
+        }
+    }
+    
+    // Method to modify the content of a file (e.g., replacing a string)
+    public static void modifyFile(String filename, String oldContent, String newContent) {
+        try {
+            // Read all the lines from the file into a list
+            List<String> lines = Files.readAllLines(Paths.get(filename));
+            
+            // Replace occurrences of oldContent with newContent
+            for (int i = 0; i < lines.size(); i++) {
+                lines.set(i, lines.get(i).replace(oldContent, newContent));
+            }
+            
+            // Write the modified lines back to the file
+            Files.write(Paths.get(filename), lines);
+            System.out.println("File modified successfully.");
+        } catch (IOException e) {
+            System.out.println("Error modifying the file: " + e.getMessage());
+        }
+    }
+    
+    public static void main(String[] args) {
+        // Test file name
+        String filename = "example.txt";
+        
+        // Writing content to the file
+        writeFile(filename, "Hello, world!\nWelcome to file handling in Java.\n");
+        
+        // Reading the file
+        readFile(filename);
+        
+        // Appending content to the file
+        appendToFile(filename, "Appended content.\n");
+        
+        // Reading the file again after appending
+        readFile(filename);
+        
+        // Modifying the file (replacing "world" with "Java")
+        modifyFile(filename, "world", "Java");
+        
+        // Reading the file again after modification
+        readFile(filename);
+    }
+}

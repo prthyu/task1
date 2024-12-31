@@ -1,0 +1,73 @@
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import org.json.JSONObject;
+
+public class WeatherApp {
+
+    // Replace with your OpenWeatherMap API key
+    private static final String API_KEY = "your_api_key"; 
+    private static final String BASE_URL = "https://api.openweathermap.org/data/2.5/weather";
+
+    // Method to fetch weather data for a given city
+    public static void getWeather(String city) {
+        try {
+            // Construct the API request URL
+            String urlString = BASE_URL + "?q=" + city + "&appid=" + API_KEY + "&units=metric";
+            URL url = new URL(urlString);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("GET");
+            
+            // Read the response from the API
+            BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            StringBuilder response = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                response.append(line);
+            }
+            reader.close();
+
+            // Parse the JSON response
+            JSONObject jsonResponse = new JSONObject(response.toString());
+            displayWeatherData(jsonResponse);
+        } catch (Exception e) {
+            System.out.println("Error fetching weather data: " + e.getMessage());
+        }
+    }
+
+    // Method to display weather data in a structured form
+    public static void displayWeatherData(JSONObject jsonResponse) {
+        try {
+            // Extract data from JSON response
+            JSONObject main = jsonResponse.getJSONObject("main");
+            JSONObject weather = jsonResponse.getJSONArray("weather").getJSONObject(0);
+            JSONObject wind = jsonResponse.getJSONObject("wind");
+
+            String cityName = jsonResponse.getString("name");
+            double temperature = main.getDouble("temp");
+            double humidity = main.getDouble("humidity");
+            String weatherDescription = weather.getString("description");
+            double windSpeed = wind.getDouble("speed");
+            int pressure = main.getInt("pressure");
+
+            // Display the weather data
+            System.out.println("Weather in " + cityName + ":");
+            System.out.println("Temperature: " + temperature + "°C");
+            System.out.println("Humidity: " + humidity + "%");
+            System.out.println("Pressure: " + pressure + " hPa");
+            System.out.println("Weather: " + weatherDescription);
+            System.out.println("Wind Speed: " + windSpeed + " m/s");
+        } catch (Exception e) {
+            System.out.println("Error displaying weather data: " + e.getMessage());
+        }
+    }
+
+    public static void main(String[] args) {
+        // City for which to fetch the weather data
+        String city = "London";  // You can change this to any city
+
+        // Fetch and display weather data
+        getWeather(city);
+    }
+}
