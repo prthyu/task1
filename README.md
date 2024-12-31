@@ -14,7 +14,4 @@
 
 # ENTER DESCRIPTION OF TASK PERFORMED NOT LESS THAN 500 WORDS
 
-# OUTPUT OF THE TASK
-
-[calculator.txt](https://github.com/user-attachments/files/18279946/calculator.txt)
 
